@@ -23,12 +23,15 @@ f = @odefun; % FTS, linear
 nx = 2;
 
 % Ellipsoidal domains
-G = @(t)0.8*eye(2)*exp(1.8*t);
-R = eye(2);
+r0 = 1; k = 0.1;
+u = @(t) r0^2 + (1/k - r0)*exp(2*t);
+G = @(t) (k*u(t))*0.8*eye(nx);
+% G = @(t)0.8*eye(2)*exp(1.8*t);
+R = eye(nx);
 
-
+% plot_trajectories(t,R,G,nx,f)
 %% Choose collocation points
-NPC = 30000;
+NPC = 50000;
 NPB = 200; % for each time sample
 NP0 = 700;
 
@@ -68,11 +71,11 @@ parameters = initNetwork(numIn,numOut,numNeurons,numLayers);
 
 % Epochs and minibatch size
 numEpochs = 40;
-numMiniBatches = 100;
+numMiniBatches = 200;
 miniBatchSize = round(NP/numMiniBatches);
 
 % Specify ADAM optimization options.
-initialLearnRate = 0.01;
+initialLearnRate = 0.003;
 decayRate = 0.00001;
 
 % To train on a GPU if one is available, specify the execution environment "auto". 
@@ -85,14 +88,17 @@ options.wVt       = 0;
 options.tolVbound = 3e0;
 options.tolVdot   = 1e0;
 
+% Debug options
+verbose = 0;
+
 %% Train model
 parameters = train_model(parameters,f, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
-  initialLearnRate,decayRate,options,1);
+  initialLearnRate,decayRate,options,verbose);
 
 %% Validate and plot results
-plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,nx,f)
+plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
 
 filename = 'E6_res.gif';
 plot_results;

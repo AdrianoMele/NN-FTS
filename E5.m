@@ -25,10 +25,10 @@ nx = 2;
 % Ellipsoidal domains
 w = 0.05;
 rot = @(t)[cos(w*2*pi*t) -sin(w*2*pi*t); sin(w*2*pi*t), cos(w*2*pi*t)]';
-G = @(t)rot(t)*[3/pi^2 0; 0 0.5/pi^2]*rot(t)' * exp(1*t);
-R = 9/pi^2 * eye(2);
+G = @(t)rot(t)*[2/pi^2 0; 0 0.3/pi^2]*rot(t)' * exp(1.2*t);
+R = 4/pi^2 * eye(2);
 
-
+% plot_trajectories(t,R,G,nx,f)
 %% Choose collocation points
 NPC = 50000;
 NPB = 200; % for each time sample
@@ -87,14 +87,17 @@ options.wVt       = 0;
 options.tolVbound = 3e0;
 options.tolVdot   = 5e-1;
 
+% Debug options
+verbose = 0;
+
 %% Train model
 parameters = train_model(parameters,f, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
-  initialLearnRate,decayRate,options,1);
+  initialLearnRate,decayRate,options,verbose);
 
 %% Validate and plot results
-plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,nx,f)
+plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
 
 filename = 'E5_res.gif';
 plot_results;
@@ -117,5 +120,5 @@ b = 0.1;
 l = 0.5;
 
 xdot = [x(2,:)
-        -g/l*sin(x(1,:))-b/m^2*x(2,:)];
+        -g/l*sin(x(1,:))-b/(m*l^2)*x(2,:)];
 end

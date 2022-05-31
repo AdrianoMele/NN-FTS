@@ -77,15 +77,16 @@ for epoch = 1:numEpochs
         [parameters,averageGrad,averageSqGrad] = adamupdate(parameters,gradients,averageGrad, ...
             averageSqGrad,iteration,learningRate);       
         
+        loss = double(gather(extractdata(loss)));
+        D = duration(0,0,toc(start),'Format','hh:mm:ss');        
         if verbose
           % Plot training progress
-          loss = double(gather(extractdata(loss)));
           addpoints(lineLoss,iteration, loss);
-          
-          D = duration(0,0,toc(start),'Format','hh:mm:ss');
           figure(ht)
           title("Epoch: " + epoch + ", Elapsed: " + string(D) + ", Learning rate: " + learningRate + ", Loss: " + loss)
           drawnow
+        else
+          disp("Epoch: " + epoch + ", Elapsed: " + string(D) + ", Learning rate: " + learningRate + ", Loss: " + loss)        
         end
     end 
     

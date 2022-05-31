@@ -39,7 +39,7 @@ for j = 1 : size(xx,1)
 end
 Vdot = gather(Vdot);
 
-% Plots
+%% Plots
 Vplot          = x1*0;
 VdotPlot       = x1*0;
 
@@ -50,12 +50,32 @@ Vplot(~idx)    = NaN;
 VdotPlot(~idx) = NaN;
 
 h = figure('Position',[180 250 550 450]);
-mesh(X1,X2,reshape(Vplot,size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
+mesh(X1,X2,reshape(Vplot-min(V),size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
 hold on
 mesh(X1,X2,reshape(VdotPlot,size(X1,1),size(X1,2)),'FaceColor',[1 0 0],'FaceAlpha','0.5')
 
 plot_ellipse(R,'r','LineWidth',2);
 plot_ellipse(G(t(1)),'b','LineWidth',2);
 
-title("Predicted V")
-legend({'V','dV/dt','\Omega_0','\Omega_t'})
+pr = ellipse(R,100);
+patch(pr(1,:),pr(2,:),'r','FaceAlpha',0.5);
+
+% pg = ellipse(G(t(1)),100);
+% patch(pg(1,:),pg(2,:),'b','FaceAlpha',0.3);
+
+xlabel('x_1')
+ylabel('x_2')
+% legend({'V','dV/dt','\Omega_0','\Omega_t',''})
+
+
+%% Find V best fit in terms of a quadratic form
+P = fminsearch(@(P)optimfun(P,V-min(V),xx),zeros(nx));
+P = P'*P;
+Vapp = V*0;
+for i = 1 : numel(V)
+  Vapp(i) = xx(i,:)*P*xx(i,:)';
+end
+
+figure(h)
+plot3(xx(:,1),xx(:,2),Vapp,'.r')
+legend({'V','dV/dt','\Omega_0','\Omega_t','', 'x^T P x'})

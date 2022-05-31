@@ -85,14 +85,17 @@ options.wVt       = 0;
 options.tolVbound = 10e0;
 options.tolVdot   = 1e-1;
 
+% Debug options
+verbose = 0;
+
 %% Train model
 parameters = train_model(parameters,f, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
-  initialLearnRate,decayRate,options,1);
+  initialLearnRate,decayRate,options,verbose);
 
 %% Validate and plot results
-plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,nx,f)
+plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
 
 filename = 'E2_res.gif';
 plot_results;

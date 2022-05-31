@@ -24,7 +24,7 @@ nx = 2;
 
 % Ellipsoidal domains
 G = @(t)0.25*eye(nx);
-R = eye(nx)*0.3;
+R = 0.3*eye(nx);
 
 
 %% Choose collocation points
@@ -85,15 +85,23 @@ options.wVt       = 0;
 options.tolVbound = 1e0;
 options.tolVdot   = 1e-1;
 
+% Debug information (0: text, 1: figure)
+verbose = 0;
+
 %% Train model
 parameters = train_model_static(parameters,f, ...
   ds,dlX0,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
-  initialLearnRate,decayRate,options,1);
+  initialLearnRate,decayRate,options,verbose);
 
 %% Validate and plot results
-plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,nx,f)
+plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
 plot_results_static;
+
+% Verify matrix condition on computed P
+A = -0.1*eye(nx); 
+disp('AP + PA'' eigenvalues: ')
+disp(num2str(eig(A*P + P*A')))
 
 savefig(h,'E0_res');
 

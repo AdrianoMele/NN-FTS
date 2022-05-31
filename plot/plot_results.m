@@ -67,7 +67,7 @@ for i = 1 : numel(t)
   zmin = min([zmin,min(V),min(Vdot)]);
 end
 
-% Plot results
+%% Plot results
 h = figure('Position',[180 250 550 450]);
 % filename = 'results.gif';
 for i = 1 : numel(t)
@@ -77,10 +77,19 @@ for i = 1 : numel(t)
   
   plot_ellipse(R,'r','LineWidth',2);
   plot_ellipse(G(t(i)),'b','LineWidth',2);
+  
+  pr = ellipse(R,100);
+  patch(pr(1,:),pr(2,:),'r','FaceAlpha',0.5);
+  
+  % pg = ellipse(G(t(1)),100);
+  % patch(pg(1,:),pg(2,:),'b','FaceAlpha',0.3);
   hold off
   
-  title("Predicted V")
-  legend({'V','dV/dt','\Omega_0','\Omega_t'})
+%   title("Predicted V")
+
+  xlabel('x_1')
+  ylabel('x_2')
+  legend({'V','dV/dt','\Omega_0','\Omega_t',''})
   
   xlim([xmin xmax])
   ylim([xmin xmax])
