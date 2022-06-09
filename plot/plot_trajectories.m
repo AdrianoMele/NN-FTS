@@ -1,8 +1,10 @@
 function plot_trajectories(t,R,G,nx,f)
 
-figure('Position', [500 300 700 450])
+figure('Position', [500 300 400 450])
 plot_ellipse3D(t(1),R,'Color',[0.2 0.8 0.2],'Linewidth',2);
 hold on
+pr = ellipse(R,20);
+fill3(t(1)*ones(1,20),pr(1,:),pr(2,:),'g','FaceAlpha',0.5);
 
 for it = 1:numel(t)
   plot_ellipse3D(t(it),G(t(it)),'b','Linewidth',2);
@@ -23,6 +25,7 @@ while n < NX0
     n = n+1;
   end
 end
+
 
 
 

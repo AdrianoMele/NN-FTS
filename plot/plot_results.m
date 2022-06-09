@@ -69,7 +69,6 @@ end
 
 %% Plot results
 h = figure('Position',[180 250 550 450]);
-% filename = 'results.gif';
 for i = 1 : numel(t)
   mesh(X1,X2,reshape(Vplot{i},size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
   hold on
@@ -84,8 +83,6 @@ for i = 1 : numel(t)
   % pg = ellipse(G(t(1)),100);
   % patch(pg(1,:),pg(2,:),'b','FaceAlpha',0.3);
   hold off
-  
-%   title("Predicted V")
 
   xlabel('x_1')
   ylabel('x_2')
@@ -106,3 +103,39 @@ for i = 1 : numel(t)
   
   pause(0.00001)
 end
+
+
+%% Plot snapshots
+
+figure('Position',[180 100 1000 600]);
+iplot = 1;
+for i = [1, round(numel(t)/2), numel(t)]
+  
+  subplot(1,3,iplot)
+  iplot = iplot+1;
+  mesh(X1,X2,reshape(Vplot{i},size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
+%   mesh(X1,X2,reshape(Vplot{i}+abs(zmin),size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
+  hold on
+  mesh(X1,X2,reshape(VdotPlot{i},size(X1,1),size(X1,2)),'FaceColor',[1 0 0],'FaceAlpha','0.5')
+  
+  plot_ellipse(R,'r','LineWidth',2);
+  plot_ellipse(G(t(i)),'b','LineWidth',2);
+  
+  pr = ellipse(R,100);
+  patch(pr(1,:),pr(2,:),'r','FaceAlpha',0.5);
+  
+  title(['t = ' num2str(t(i)) 's'], 'FontSize', 14)
+
+  xlabel('x_1')
+  ylabel('x_2')
+  
+  xlim([xmin xmax])
+  ylim([xmin xmax])
+  zlim([zmin zmax])
+%   zlim([0.5*zmin zmax+abs(zmin)])
+  
+%   set(gca,'CameraPosition',[-10.2092 -13.3049 100.2452]) % E5
+%   set(gca,'CameraPosition',[-115.5051 -123.3994 85.3582]) % E6
+  
+end
+legend({'V','dV/dt','\Omega_0','\Omega_t',''}, 'FontSize', 14)

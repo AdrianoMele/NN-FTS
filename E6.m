@@ -17,7 +17,7 @@ rng(0) % for repeatability
 t = (0:1e-1:1)';
 
 % System
-f = @odefun; % FTS, linear
+f = @odefun; 
 
 % State dimension
 nx = 2;
@@ -29,7 +29,8 @@ G = @(t) (k*u(t))*0.8*eye(nx);
 % G = @(t)0.8*eye(2)*exp(1.8*t);
 R = eye(nx);
 
-% plot_trajectories(t,R,G,nx,f)
+plot_trajectories(t,R,G,nx,f)
+
 %% Choose collocation points
 NPC = 50000;
 NPB = 200; % for each time sample
@@ -106,8 +107,6 @@ plot_results;
 rmpath ./functions
 rmpath ./model
 rmpath ./plot
-
-
 
 return
 

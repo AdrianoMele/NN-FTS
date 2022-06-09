@@ -17,7 +17,7 @@ rng(0) % for repeatability
 t = (0:1e-1:3)';
 
 % System
-f = @odefun; % FTS, linear
+f = @odefun; 
 
 % State dimension
 nx = 2;
@@ -26,6 +26,7 @@ nx = 2;
 G = @(t)[2/pi^2 0; 0 0.5/pi^2]*exp(0.4*t);
 R = 4/pi^2*eye(2);
 
+plot_trajectories(t,R,G,nx,f)
 
 %% Choose collocation points
 NPC = 10000;

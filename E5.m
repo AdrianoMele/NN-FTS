@@ -14,24 +14,26 @@ rng(0) % for repeatability
 %% Define FTS problem
 
 % Time vector
-t = (0:1e-1:3)';
+t = (0:5e-2:2)';
 
 % System
-f = @odefun; % FTS, linear
+f = @odefun; 
 
 % State dimension
 nx = 2;
 
 % Ellipsoidal domains
-w = 0.05;
-rot = @(t)[cos(w*2*pi*t) -sin(w*2*pi*t); sin(w*2*pi*t), cos(w*2*pi*t)]';
-G = @(t)rot(t)*[2/pi^2 0; 0 0.3/pi^2]*rot(t)' * exp(1.2*t);
+w = 0.1;
+rot = @(t)[cos(w*2*pi*t) sin(w*2*pi*t); -sin(w*2*pi*t), cos(w*2*pi*t)]';
+G = @(t)rot(t)*[2/pi^2*exp(0.5*t) 0; 0 0.1/pi^2*exp(2*t)]*rot(t)';
+% G = @(t)[2/pi^2 0; 0 0.5/pi^2]*exp(0.4*t);
 R = 4/pi^2 * eye(2);
 
-% plot_trajectories(t,R,G,nx,f)
+plot_trajectories(t,R,G,nx,f)
+
 %% Choose collocation points
-NPC = 50000;
-NPB = 200; % for each time sample
+NPC = 60000; % 50000
+NPB = 100; % for each time sample
 NP0 = 700;
 
 % Total number of points
@@ -59,7 +61,7 @@ dlX0 = dlarray(X0','CB');
 
 % Define a multilayer perceptron architecture.
 numLayers = 5; % # hidden layers + 2 (in/out)
-numNeurons = 64;
+numNeurons = 32; 
 numIn  = nx + 1; % state and time
 numOut = 1;
 
@@ -70,22 +72,22 @@ parameters = initNetwork(numIn,numOut,numNeurons,numLayers);
 
 % Epochs and minibatch size
 numEpochs = 40;
-numMiniBatches = 200;
+numMiniBatches = 500; %500
 miniBatchSize = round(NP/numMiniBatches);
 
 % Specify ADAM optimization options.
-initialLearnRate = 0.003;
+initialLearnRate = 0.003; %0.003
 decayRate = 0.00001;
 
 % To train on a GPU if one is available, specify the execution environment "auto". 
 executionEnvironment = "auto";
 
 % Additional training parameters
-options.wVdot     = 5;
+options.wVdot     = 3;
 options.wVbound   = 1;
 options.wVt       = 0;
-options.tolVbound = 3e0;
-options.tolVdot   = 5e-1;
+options.tolVbound = 1e-0;
+options.tolVdot   = 1e-1;
 
 % Debug options
 verbose = 0;

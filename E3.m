@@ -17,7 +17,7 @@ rng(0) % for repeatability
 t = (0:5e-2:1)';
 
 % System
-f = @(t,x) 0.1*x; % FTS, linear
+f = @(t,x) 0.1*x; 
 
 % State dimension
 nx = 2;
