@@ -6,9 +6,9 @@ NP = NPC+NPB*numel(t)+NP0;
 miniBatchSize = round(NP/numMiniBatches);
 
 % Place collocation points
-[TC,XC] = place_collocation_points_ellipse(t,G,NPC,nx);
-[T0,X0] = place_initial_points_ellipse(t,R,NP0,nx);
-[TB,XB] = place_boundary_points_ellipse(t,G,NPB,nx);
+[TC,XC] = place_collocation_points_ellipse(t,G,NPC,nx,xc);
+[T0,X0] = place_initial_points_ellipse(t,R,NP0,nx,xc);
+[TB,XB] = place_boundary_points_ellipse(t,G,NPB,nx,xc);
 
 % Create datastore with collocation points (to be divided in minibatches)
 ds = arrayDatastore([TC XC]);

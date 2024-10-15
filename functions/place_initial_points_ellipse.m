@@ -1,7 +1,8 @@
 function [T0,X0] = place_initial_points_ellipse(t,R,NP0,nx,xc)
 % Places NP0 points in the set {x | x'Rx<1}
 
-if nargin<5, xc = @(t)[0;0]; end
+if nargin<5,    xc = @(t)[0;0]; end
+if isempty(xc), xc = @(t)[0;0]; end
 
 % Choose even NP0
 if mod(NP0,2)==1, NP0 = NP0+1; end

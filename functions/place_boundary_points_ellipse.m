@@ -1,6 +1,7 @@
 function [TB,XB] = place_boundary_points_ellipse(t,G,NPB,nx,xc)
 
-if nargin<5, xc = @(t)[0,0]; end
+if nargin<5,    xc = @(t)[0,0]; end
+if isempty(xc), xc = @(t)[0;0]; end
 
 TB = zeros(numel(t)*NPB,1);
 XB = zeros(numel(t)*NPB,nx);

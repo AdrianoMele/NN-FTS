@@ -15,7 +15,7 @@ verbose = 1;
 executionEnvironment = "cpu";
 
 % for ellipses moving in time; might be overwritten in the setup
-xc = @(t)[];
+xc = [];
 
 %% Choose example
 example = "E2"; 
