@@ -1,4 +1,4 @@
-function [parameters] = train_model(parameters,f, ...
+function [parameters] = train_model(parameters,f,g,Umax, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
   initialLearnRate,decayRate,options,verbose)
@@ -89,7 +89,7 @@ for epoch = 1:numEpochs
         end
     end 
     
-    [~,~,solutionFound] = dlfeval(@modelLoss,parameters,dlXC,dlTC,dlX0,dlT0,dlXB,dlTB,f,options);
+    [~,~,solutionFound] = dlfeval(@modelLoss,parameters,dlXC,dlTC,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
     
     % Break the cycle if a solution is found
     if solutionFound 

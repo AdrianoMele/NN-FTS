@@ -1,4 +1,4 @@
-function [network] = train_model_DLTB(network,f, ...
+function [network] = train_model_DLTB(network,f,g,Umax, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
   initialLearnRate,decayRate,options,verbose)
@@ -74,7 +74,7 @@ for epoch = 1:numEpochs
     dlT = dlarray(T','SBCS');
 
     % Evaluate the model gradients and loss using dlfeval
-    [gradients,loss,~] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,options);
+    [gradients,loss,~] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
 
     % Update learning rate
     learningRate = initialLearnRate / (1+decayRate*iteration);
@@ -103,7 +103,7 @@ for epoch = 1:numEpochs
   end
 
   % Break the cycle if a solution is found
-  [~,~,solutionFound] = dlfeval(@modelLoss_DLTB,network,dlXC,dlTC,dlX0,dlT0,dlXB,dlTB,f,options); 
+  [~,~,solutionFound] = dlfeval(@modelLoss_DLTB,network,dlXC,dlTC,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options); 
   if solutionFound
     disp('Solution found!')
     break

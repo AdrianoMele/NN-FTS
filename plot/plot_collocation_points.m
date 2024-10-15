@@ -1,6 +1,9 @@
-function plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
-
+function plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,xc)
 % Plot collocation points and time-varying domains in 3D
+
+if nargin<10,   xc = @(t)[0;0]; end
+if isempty(xc), xc = @(t)[0;0]; end
+
 figure
 plot_ellipse3D(t(1),R,xc(0),'g');
 hold on

@@ -1,4 +1,4 @@
-function [gradients,loss,solutionFound] = modelLoss(parameters,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,options)
+function [gradients,loss,solutionFound] = modelLoss(parameters,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
 
 % Extract options
 tolVdot   = options.tolVdot;
@@ -12,8 +12,28 @@ wVt     = options.wVt;
 Vx = gradients_V{1};
 Vt = gradients_V{2};
 
+% Lie derivatives
+f_x = f(dlT,dlX);
+g_x = g(dlT,dlX);
+LfV = sum(Vx.*f_x);
+
+if numel(Umax)==1
+  LgV = sum(Vx.*g_x);
+elseif numel(Umax)>1
+  gU = zeros(numel(Umax),size(g_x,numel(Umax)+1));
+  for i = 1 : size(g_x,3)
+    gU(:,i)  = squeeze(g_x(:,:,i))*Umax;
+    LgV(:,i) = (extractdata(Vx(:,1))'*g_x(:,:,1))';
+  end  
+end
+LgVU = abs(LgV).*Umax; 
+Vdot = Vt + LfV - LgVU;
+% LgV = sum(Vx.*g_x);
+% Vdot_train = LfV - abs(LgV).*Umax;
+
+
 % Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
-Vdot = Vt + sum(Vx.*f(dlT,dlX));
+% Vdot = Vt + sum(Vx.*f(dlT,dlX));
 Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0);
 zeroTarget = zeros(size(Vdoterr), 'like', Vdoterr);
 lossVdot = mse(Vdoterr,zeroTarget);
@@ -46,8 +66,7 @@ gradients = dlgradient(loss,parameters,'EnableHigherDerivatives',true);
 % Check termination condition: derivative must be nonpositive everywhere,
 % distance between inf and sup must be positive
 stopFlagVB   = not(any(V0max-VB>=0));
-stopFlagVdot = not(any(Vdot>0));
-
+stopFlagVdot = not(any(Vdot>0)) | (options.wVdot==0); % if not optimizing for Vdot, just loook at the other condition;
 solutionFound = stopFlagVB && stopFlagVdot;
 
 end

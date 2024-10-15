@@ -17,8 +17,12 @@ executionEnvironment = "cpu";
 % for ellipses moving in time; might be overwritten in the setup
 xc = [];
 
+% dummy input term for stability analysis
+g    = @(x)0;
+Umax = 0;
+
 %% Choose example
-example = "E2"; 
+example = "Ec7"; 
 
 setupscript = example + "_setup.m";
 filename    = example + "_res.gif"; % used to save plot
@@ -30,13 +34,13 @@ run(setupscript);
 preprocess;
 
 %% train model
-parameters = train_model(parameters,f, ...
+parameters = train_model(parameters,f,g,Umax, ...
   ds,dlT0,dlX0,dlTB,dlXB,...
   miniBatchSize,numEpochs,executionEnvironment,...
   initialLearnRate,decayRate,options,verbose);
 
 %% Validate and plot results
-plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
+plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,xc)
 
 plot_results;
 

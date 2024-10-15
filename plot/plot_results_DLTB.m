@@ -34,7 +34,7 @@ for i = 1 : numel(t)
   dltt = dlarray(tt','SBCS');
   
   % Verify condition
-  [~,~,solutionFound] = dlfeval(@modelLoss_DLTB,network,dlxx,dltt,dlX0,dlT0,dlXB,dlTB,f,options);
+  [~,~,solutionFound] = dlfeval(@modelLoss_DLTB,network,dlxx,dltt,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
   
   if not(solutionFound)
     warning('Conditions not satisfied on the test set at t = %.2f s. Try increasing the number of collocation points.',t(i))
