@@ -67,7 +67,6 @@ numOut = 1;
 
 parameters = initNetwork(numIn,numOut,numNeurons,numLayers);
 
-
 %% Specify Training Options
 
 % Epochs and minibatch size

@@ -69,7 +69,6 @@ for epoch = 1:numEpochs
         % Evaluate the model gradients and loss using dlfeval
         [gradients,loss,~] = dlfeval(accfun_loss,parameters,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,options);
         
-
         % Update learning rate
         learningRate = initialLearnRate / (1+decayRate*iteration);
         
