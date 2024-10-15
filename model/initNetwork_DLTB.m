@@ -18,29 +18,10 @@ layers = [layers
           fullyConnectedLayer(numOut) ]; % last fully connected layer
 network = dlnetwork(layers);
 
-
-
-
-% network = struct;
-% 
-% sz = [numNeurons numIn];
-% network.fc1.Weights = initializeHe(sz,3);
-% network.fc1.Bias = initializeZeros([numNeurons 1]);
-% 
-% % Initialize the parameters for each of the remaining intermediate fully connect
-% % operations
-% sz = [numNeurons numNeurons];
-% numIn = numNeurons;
-% for layerNumber=2:numLayers-1
-%   name = "fc"+layerNumber;
-%   network.(name).Weights = initializeHe(sz,numIn);
-%   network.(name).Bias = initializeZeros([numNeurons 1]);
+% % use legacy initialization to compare results
+% iw = find(network.Learnables(:,2).Parameter=="Weights");
+% for i = 1 : numLayers
+%   network.Learnables(iw(i),3).Value{1} = initializeHe(size(network.Learnables(iw(i),3).Value{1}),numIn);
 % end
-% 
-% % Initialize last fully connected layer
-% sz = [numOut numNeurons];
-% name = "fc"+numLayers;
-% network.(name).Weights = initializeHe(sz,numIn);
-% network.(name).Bias = initializeZeros([numOut 1]);
-% end
+
 

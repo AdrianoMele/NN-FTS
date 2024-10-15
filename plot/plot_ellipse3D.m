@@ -1,9 +1,7 @@
-function plot_ellipse3D(x,E,varargin)
+function plot_ellipse3D(t,E,xc,varargin)
  % plots an ellipse of the form xEx = 1
- R = chol(E);
- t = linspace(0, 2*pi, 100); % or any high number to make curve smooth
- z = [cos(t); sin(t)];
- ellipse = inv(R) * z;
- x = x + t*0;
- plot3(x,ellipse(1,:), ellipse(2,:), varargin{:})
+
+ ellipse_ = ellipse(E,30,xc);
+ t = t + zeros(1,size(ellipse_,2));
+ plot3(t,ellipse_(1,:), ellipse_(2,:), varargin{:})
 end 

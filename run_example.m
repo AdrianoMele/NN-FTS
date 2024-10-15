@@ -14,8 +14,11 @@ verbose = 1;
 % To train on a GPU if one is available, specify the execution environment "auto". 
 executionEnvironment = "cpu";
 
+% for ellipses moving in time; might be overwritten in the setup
+xc = @(t)[];
+
 %% Choose example
-example = "E6"; 
+example = "E2"; 
 
 setupscript = example + "_setup.m";
 filename    = example + "_res.gif"; % used to save plot

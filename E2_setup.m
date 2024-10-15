@@ -33,9 +33,9 @@ decayRate        = 0.00001;
 options.wVdot     = 10;
 options.wVbound   = 1;
 options.wVt       = 0;
-options.wV        = 0;
-options.tolVbound = 10e0;
-options.tolVdot   = 1e-1;
+options.wV        = 1e-3;
+options.tolVbound = 1e1;
+options.tolVdot   = 1e-0;
 
 % Collocation points
 NPC = 8000;

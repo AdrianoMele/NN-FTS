@@ -1,5 +1,7 @@
-function [T0,X0] = place_initial_points_ellipse(t,R,NP0,nx)
+function [T0,X0] = place_initial_points_ellipse(t,R,NP0,nx,xc)
 % Places NP0 points in the set {x | x'Rx<1}
+
+if nargin<5, xc = @(t)[0;0]; end
 
 % Choose even NP0
 if mod(NP0,2)==1, NP0 = NP0+1; end
@@ -11,7 +13,7 @@ n = 1;
 while n < NP0/2+1
   xt = (rand(nx,1)-[0.5;0.5])*2*max(real(1./sqrt(eig(R))));
   if xt'*R*xt<=1
-    X0(n,:) = xt;
+    X0(n,:) = xt + xc(t(1));
     n = n+1;
   end
 end

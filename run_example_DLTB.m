@@ -15,7 +15,7 @@ verbose = 1;
 executionEnvironment = "cpu";
 
 %% Choose example
-example = "E6"; 
+example = "E5"; 
 
 setupscript = example + "_setup.m";
 filename    = example + "_res.gif"; % used to save plot

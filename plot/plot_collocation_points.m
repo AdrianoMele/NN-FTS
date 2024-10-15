@@ -2,12 +2,12 @@ function plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC)
 
 % Plot collocation points and time-varying domains in 3D
 figure
-plot_ellipse3D(t(1),R,'g');
+plot_ellipse3D(t(1),R,xc(0),'g');
 hold on
 plot3(T0,X0(:,1),X0(:,2),'.','Color',[0.2 0.8 0.2],'MarkerSize',15);
 
 for it = 1:numel(t)
-  plot_ellipse3D(t(it),G(t(it)),'b');
+  plot_ellipse3D(t(it),G(t(it)),xc(t(it)),'b');
 end
 
 plot3(TB,XB(:,1),XB(:,2),'.','Color',[0.5 0.2 0.8],'MarkerSize',5)

@@ -11,14 +11,14 @@ numEpochs      = 40;
 numMiniBatches = 500;
 
 % Specify ADAM optimization options
-initialLearnRate = 0.003;
+initialLearnRate = 0.005;
 decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 3;    % weight on derivative condition
 options.wVbound   = 1;    % weight on boundary condition
 options.tolVbound = 1e0;  % tolerance on boundary condition
-options.tolVdot   = 1e-1; % tolerance on derivative condition
+options.tolVdot   = 1e0;  % tolerance on derivative condition
 options.wVt       = 0;    % regularization on dV/dt
 options.wV        = 0;    % regularization on V
 

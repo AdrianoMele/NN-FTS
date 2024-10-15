@@ -14,7 +14,7 @@ Vt = gradients_V{2};
 
 % Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
 Vdot = Vt + sum(Vx.*f(dlT,dlX));
-Vdoterr = max(Vdot + tolVdot,0);
+Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0);
 zeroTarget = zeros(size(Vdoterr), 'like', Vdoterr);
 lossVdot = mse(Vdoterr,zeroTarget);
 
