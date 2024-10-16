@@ -17,16 +17,14 @@ if isempty(xc(0)), xc = @(t)[0;0]; end
 xc_ = xc(t);
 XM  = max(max(abs(xc_)));
 
-
 % grid
 xmax = max(max(extractdata(dlXB)));
 xmin = min(min(extractdata(dlXB)));
 % xmax = max(real(1./sqrt(ee))) + XM;
 % xmin = -xmax - XM;
-[X1,X2] = meshgrid(linspace(xmin,xmax,50),linspace(xmin,xmax,50));
+[X1,X2] = meshgrid(linspace(xmin,xmax,30),linspace(xmin,xmax,30));
 x1 = reshape(X1,[],1);
 x2 = reshape(X2,[],1);
-
 
 % vertical axis based on V
 zmax = 0;
@@ -40,6 +38,7 @@ for i = 1 : numel(t)
     x_ = xx(j,:) - xc(t(i))';
     idx(j) = x_*G(t(i))*x_'<1;
   end
+%   idx = true(size(xx,1),1);
   xx = xx(idx,:);
   tt = t(i)*ones(size(xx,1),1);
   dlxx = dlarray(xx','SBCS');
@@ -58,10 +57,13 @@ for i = 1 : numel(t)
   Vx = extractdata(Vgrad{1});
   Vt = extractdata(Vgrad{2});
   V = gather(V);
+
+  Vx = squeeze(Vx);
+  Vt = squeeze(Vt);
   
   Vdot = V*0;
   for j = 1 : size(xx,1)
-    Vdot(j) = Vt(j) + sum(Vx(:,j).*f(tt(j),xx(j,:)'));
+    Vdot(j) = Vt(j) + Vx(:,j)'*f(tt(j),xx(j,:)') + Vx(:,j)' * g(tt(j),xx(j,:)') * controller_DLTB(network,f,g,tt(j),xx(j,:)',Umax);
   end
   Vdot = gather(Vdot);
   
@@ -72,8 +74,8 @@ for i = 1 : numel(t)
   Vplot{i}(idx)     = V;
   VdotPlot{i}(idx)  = Vdot;
   
-  Vplot{i}(~idx)    = NaN;
-  VdotPlot{i}(~idx) = NaN;
+%   Vplot{i}(~idx)    = NaN;
+%   VdotPlot{i}(~idx) = NaN;
   
   zmax = max([zmax,max(V),max(Vdot)]);
   zmin = min([zmin,min(V),min(Vdot)]);
@@ -86,14 +88,14 @@ for i = 1 : numel(t)
   hold on
   mesh(X1,X2,reshape(VdotPlot{i},size(X1,1),size(X1,2)),'FaceColor',[1 0 0],'FaceAlpha','0.5')
   
-  plot_ellipse(R,'r','LineWidth',2);
-  plot_ellipse(G(t(i)),'b','LineWidth',2);
+  plot_ellipse(R,xc(t(1)),'r','LineWidth',2);
+  plot_ellipse(G(t(i)),xc(t(i)),'b','LineWidth',2);
   
-  pr = ellipse(R,100);
+  pr = ellipse(R,100,xc(t(1)));
   patch(pr(1,:),pr(2,:),'r','FaceAlpha',0.5);
   
-  % pg = ellipse(G(t(1)),100);
-  % patch(pg(1,:),pg(2,:),'b','FaceAlpha',0.3);
+  pg = ellipse(G(t(i)),100,xc(t(i)));
+  patch(pg(1,:),pg(2,:),'b','FaceAlpha',0.3);
   hold off
 
   xlabel('x_1')
@@ -116,7 +118,6 @@ for i = 1 : numel(t)
   pause(0.00001)
 end
 
-
 %% Plot snapshots
 
 figure('Position',[180 100 1000 600]);
@@ -130,10 +131,10 @@ for i = [1, round(numel(t)/2), numel(t)]
   hold on
   mesh(X1,X2,reshape(VdotPlot{i},size(X1,1),size(X1,2)),'FaceColor',[1 0 0],'FaceAlpha','0.5')
   
-  plot_ellipse(R,'r','LineWidth',2);
-  plot_ellipse(G(t(i)),'b','LineWidth',2);
+  plot_ellipse(R,xc(t(1)),'r','LineWidth',2);
+  plot_ellipse(G(t(i)),xc(t(i)),'b','LineWidth',2);
   
-  pr = ellipse(R,100);
+  pr = ellipse(R,100,xc(t(1)));
   patch(pr(1,:),pr(2,:),'r','FaceAlpha',0.5);
   
   title(['t = ' num2str(t(i)) 's'], 'FontSize', 14)

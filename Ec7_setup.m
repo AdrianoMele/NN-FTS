@@ -16,11 +16,11 @@ decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 1e0;  % weight on derivative condition
-options.wVbound   = 1e1;  % weight on boundary condition
+options.wVbound   = 1e0;  % weight on boundary condition
 options.tolVdot   = 0;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
-options.tolVbound = 1e1;  % tolerance on boundary condition
+options.tolVbound = 1e-1;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
-options.wV        = 0e-6; % regularization on V
+options.wV        = 0e-5; % regularization on V
 
 % Collocation points
 NPC = 10000;
@@ -30,7 +30,7 @@ NP0 = 200;
 %% Define FTS problem
 
 % Time vector
-t = (0:1e-2:5)';
+t = (0:1e-2:3)';
 
 % System
 f = @ff; 
@@ -40,7 +40,7 @@ g = @gg;
 nx = 2;
 
 % maximum control action
-Umax = [1;1];
+Umax = [1;1]*10;
 
 % guiding center
 xc = @(t) [2*t + sin(2*pi*t/5);

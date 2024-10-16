@@ -1,5 +1,5 @@
 function u = controller_DLTB(network,f,g,t,x,Umax)
-% u = controller(parameters,f,g,x,Umax)
+% u = controller(parameters,f,g,t,x,Umax)
 %   Computes the controller u according to Sontag's formula based on the
 %   neural Lyapunov function represented by the NN with the specified
 %   parameters.

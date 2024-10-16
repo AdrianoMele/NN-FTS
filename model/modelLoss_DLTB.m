@@ -31,9 +31,9 @@ Vx_ = extractdata(Vx);
 Vx_ = reshape(squeeze(Vx_),size(Vx_,1),1,size(Vx_,4));
 g_  = extractdata(g_x);
 LgV = pagemtimes(Vx_,'transpose',g_,'none');
-UU = repmat(Umax,1,numel(dlT));
-LgVU = sum(squeeze(abs(LgV)).*UU); 
-LgVU = dlarray(LgVU,'SBCS');
+UU = repmat(Umax,1,1,numel(dlT));
+LgVU = pagemtimes(abs(LgV),UU); 
+LgVU = dlarray(LgVU,'SCBS');
 
 % Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
 % Vdot = Vt + sum(Vx.*f(dlT,dlX));
@@ -73,8 +73,10 @@ gradients = dlgradient(loss,network.Learnables,'EnableHigherDerivatives',true);
 
 % Check termination condition: derivative must be nonpositive everywhere,
 % distance between inf and sup must be positive
-stopFlagVB    = not(any(V0max-VB>=0));
-stopFlagVdot  = not(any(Vdot>0)) | (options.wVdot==0); % if not optimizing for Vdot, just loook at the other condition
+stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
+stopFlagVdot  = not(any(extractdata(Vdot)>0)) | (options.wVdot==0); % if not optimizing for Vdot, just loook at the other condition
 solutionFound = stopFlagVB & stopFlagVdot;
+
+fprintf('VB condition: %d, Vdot condition: %d \n', stopFlagVB, stopFlagVdot)
 
 end

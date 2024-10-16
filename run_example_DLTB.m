@@ -44,8 +44,8 @@ plot_collocation_points(t,R,G,T0,X0,TB,XB,TC,XC,xc)
 
 plot_results_DLTB;
 
-rmpath ./functions
-rmpath ./model
-rmpath ./plot
+% rmpath ./functions
+% rmpath ./model
+% rmpath ./plot
 
 

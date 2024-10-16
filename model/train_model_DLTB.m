@@ -38,8 +38,8 @@ averageGrad   = [];
 averageSqGrad = [];
 
 % Accelerate the model gradients function using the |dlaccelerate| function.
-accfun_loss = dlaccelerate(@modelLoss_DLTB);
-% accfun_loss = @modelLoss_DLTB; % no acceleration :(
+% accfun_loss = dlaccelerate(@modelLoss_DLTB);
+accfun_loss = @modelLoss_DLTB; % no acceleration :(
 
 % Initialize the training progress plot.
 if verbose
@@ -95,10 +95,10 @@ for epoch = 1:numEpochs
       % Plot training progress
       addpoints(lineLoss,iteration, loss);
       figure(ht)
-      title(sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.3f", epoch, string(D), learningRate, loss))
+      title(sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f", epoch, string(D), learningRate, loss))
       drawnow
     else
-      fprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.3f \n", epoch, string(D), learningRate, loss)
+      fprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n", epoch, string(D), learningRate, loss)
     end
   end
 
