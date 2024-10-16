@@ -8,24 +8,24 @@ numNeurons = 32;
 %% Training options
 % Epochs and minibatch size
 numEpochs      = 40;
-numMiniBatches = 200;
+numMiniBatches = 500;
 
 % Specify ADAM optimization options
 initialLearnRate = 0.01;
 decayRate        = 0.00001;
 
 % Additional training parameters
-options.wVdot     = 1e-2;    % weight on derivative condition
-options.wVbound   = 1;    % weight on boundary condition
-options.tolVdot   = 1e-1;  % tolerance on derivative condition
-options.tolVbound = 1e0;  % tolerance on boundary condition
+options.wVdot     = 1e0;  % weight on derivative condition
+options.wVbound   = 1e1;  % weight on boundary condition
+options.tolVdot   = 0;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
+options.tolVbound = 1e1;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
-options.wV        = 1e-4;    % regularization on V
+options.wV        = 0e-6; % regularization on V
 
 % Collocation points
-NPC = 20000;
-NPB = 50; % for each time sample
-NP0 = 500;
+NPC = 10000;
+NPB = 100; % for each time sample
+NP0 = 200;
 
 %% Define FTS problem
 
@@ -82,6 +82,10 @@ end
 function g_ = gg(t,x) % with v1 = u1*cos(u2) and v2 = u1*sin(u2)
 g_ = eye(size(x,1));
 g_ = repmat(g_,1,1,numel(t));
+
+if isdlarray(x) 
+  g_ = dlarray(g_,'SSB'); 
+end
 end
 
 % function g_ = gg(t,x)

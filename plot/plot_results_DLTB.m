@@ -12,12 +12,23 @@ for i = 2 : 2 : 2*numel(t)
   ee(1+i:2+i) = eig(G(t(i/2)));
 end
 
-xmax = max(real(1./sqrt(ee)));
-xmin = -xmax;
+% center
+if isempty(xc(0)), xc = @(t)[0;0]; end
+xc_ = xc(t);
+XM  = max(max(abs(xc_)));
+
+
+% grid
+xmax = max(max(extractdata(dlXB)));
+xmin = min(min(extractdata(dlXB)));
+% xmax = max(real(1./sqrt(ee))) + XM;
+% xmin = -xmax - XM;
 [X1,X2] = meshgrid(linspace(xmin,xmax,50),linspace(xmin,xmax,50));
 x1 = reshape(X1,[],1);
 x2 = reshape(X2,[],1);
 
+
+% vertical axis based on V
 zmax = 0;
 zmin = 0;
 for i = 1 : numel(t)
@@ -26,7 +37,8 @@ for i = 1 : numel(t)
   xx = [x1 x2];
   idx = false(size(xx,1),1);
   for j = 1 : numel(x1)
-    idx(j) = xx(j,:)*G(t(i))*xx(j,:)'<1;
+    x_ = xx(j,:) - xc(t(i))';
+    idx(j) = x_*G(t(i))*x_'<1;
   end
   xx = xx(idx,:);
   tt = t(i)*ones(size(xx,1),1);

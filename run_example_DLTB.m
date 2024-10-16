@@ -14,12 +14,12 @@ verbose = 1;
 % To train on a GPU if one is available, specify the execution environment "auto". 
 executionEnvironment = "cpu";
 
-% for ellipses moving in time; might be overwritten in the setup
-xc = [];
-
 % dummy input term for stability analysis
 g    = @(x)0;
 Umax = 0;
+
+% for ellipses moving in time; might be overwritten in the setup
+xc = [];
 
 %% Choose example
 example = "Ec7"; 

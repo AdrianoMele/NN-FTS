@@ -14,33 +14,30 @@ Vx = gradients_V{1};
 Vt = gradients_V{2};
 
 % remove unnecessary dimensions
-Vx = squeeze(Vx);
-Vt = squeeze(Vt);
+% Vx = squeeze(Vx);
+% Vt = squeeze(Vt);
 
-dlX = squeeze(dlX);
-dlT = squeeze(dlT);
+% dlX = squeeze(dlX);
+% dlT = squeeze(dlT);
 
 % Lie derivatives
 f_x = f(dlT,dlX);
-g_x = g(dlT,dlX);
+g_x = g(dlT,dlX); 
 LfV = sum(Vx.*f_x);
 
-if numel(Umax)==1
-  LgV = sum(Vx.*g_x);
-elseif numel(Umax)>1
-  gU = zeros(numel(Umax),size(g_x,numel(Umax)+1));
-  for i = 1 : size(g_x,3)
-    gU(:,i)  = squeeze(g_x(:,:,i))*Umax;
-    LgV(:,i) = (extractdata(Vx(:,i))'*g_x(:,:,i))';
-  end  
-end
-LgVU = sum(abs(LgV).*Umax); 
-Vdot = Vt + LfV - LgVU;
-% LgV = sum(Vx.*g_x);
-% Vdot_train = LfV - abs(LgV).*Umax;
+% all the gymnastics below should fix dimension labels and make the
+% operations afterwards more robust
+Vx_ = extractdata(Vx);
+Vx_ = reshape(squeeze(Vx_),size(Vx_,1),1,size(Vx_,4));
+g_  = extractdata(g_x);
+LgV = pagemtimes(Vx_,'transpose',g_,'none');
+UU = repmat(Umax,1,numel(dlT));
+LgVU = sum(squeeze(abs(LgV)).*UU); 
+LgVU = dlarray(LgVU,'SBCS');
 
 % Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
 % Vdot = Vt + sum(Vx.*f(dlT,dlX));
+Vdot = Vt + LfV - LgVU;
 Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0); % ~ Zubov PDE
 zeroTarget = zeros(size(Vdoterr), 'like', Vdoterr);
 lossVdot = mse(Vdoterr,zeroTarget);
