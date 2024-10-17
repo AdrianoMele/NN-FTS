@@ -74,8 +74,8 @@ for i = 1 : numel(t)
   Vplot{i}(idx)     = V;
   VdotPlot{i}(idx)  = Vdot;
   
-%   Vplot{i}(~idx)    = NaN;
-%   VdotPlot{i}(~idx) = NaN;
+  Vplot{i}(~idx)    = NaN;
+  VdotPlot{i}(~idx) = NaN;
   
   zmax = max([zmax,max(V),max(Vdot)]);
   zmin = min([zmin,min(V),min(Vdot)]);
