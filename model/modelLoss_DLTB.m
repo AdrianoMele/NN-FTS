@@ -38,7 +38,8 @@ LgVU = dlarray(LgVU,'SCBS');
 % Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
 % Vdot = Vt + sum(Vx.*f(dlT,dlX));
 Vdot = Vt + LfV - LgVU;
-Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0); % ~ Zubov PDE
+Vdoterr = max(Vdot + tolVdot,0);
+% Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0); % ~ Zubov PDE
 zeroTarget = zeros(size(Vdoterr), 'like', Vdoterr);
 lossVdot = mse(Vdoterr,zeroTarget);
 
@@ -74,7 +75,7 @@ gradients = dlgradient(loss,network.Learnables,'EnableHigherDerivatives',true);
 % Check termination condition: derivative must be nonpositive everywhere,
 % distance between inf and sup must be positive
 stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
-stopFlagVdot  = not(any(extractdata(Vdot)>0)) | (options.wVdot==0); % if not optimizing for Vdot, just loook at the other condition
+stopFlagVdot  = not(any(extractdata(Vdot)>0));
 solutionFound = stopFlagVB & stopFlagVdot;
 
 fprintf('VB condition: %d, Vdot condition: %d \n', stopFlagVB, stopFlagVdot)

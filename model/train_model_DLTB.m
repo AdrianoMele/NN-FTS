@@ -11,11 +11,11 @@ if (executionEnvironment == "auto" && canUseGPU) || (executionEnvironment == "gp
   dlXB = gpuArray(dlXB);
 end
 
-% Shuffle dataset
-ds = shuffle(ds);
+% % Shuffle dataset
+% ds = shuffle(ds);
 
 % Used to verify termination condition
-TXC = cell2mat(ds.readall);
+TXC  = cell2mat(ds.readall);
 dlTC = dlarray(TXC(:,1)',    'SBCS');
 dlXC = dlarray(TXC(:,2:end)','SBCS');
 

@@ -16,9 +16,9 @@ decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 1e0;  % weight on derivative condition
-options.wVbound   = 1e0;  % weight on boundary condition
+options.wVbound   = 5e1;  % weight on boundary condition
 options.tolVdot   = 0;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
-options.tolVbound = 1e-1;  % tolerance on boundary condition
+options.tolVbound = 1e-0;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
 options.wV        = 0e-5; % regularization on V
 
@@ -40,16 +40,16 @@ g = @gg;
 nx = 2;
 
 % maximum control action
-Umax = [1;1]*10;
+Umax = [1;1]*10/sqrt(2);
 
 % guiding center
 xc = @(t) [2*t + sin(2*pi*t/5);
            2*t + cos(2*pi*t/5) - 1]; 
 
+% ellipses
 gamma0 = 0.1;
 rho    = @(t) 3*gamma0.*exp(-t/5);
 
-% ellipses
 G = @(t)1/rho(t)^2 * eye(nx);
 R = 1/gamma0^2     * eye(nx);
 
