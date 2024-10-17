@@ -15,6 +15,7 @@ for i = 2 : numLayers-1
             fullyConnectedLayer(numNeurons) ]; %#ok<AGROW> 
 end
 layers = [layers
+          softplusLayer
           fullyConnectedLayer(numOut) ]; % last fully connected layer
 network = dlnetwork(layers);
 
