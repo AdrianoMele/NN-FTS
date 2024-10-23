@@ -22,7 +22,7 @@ xmax = max(max(extractdata(dlXB)));
 xmin = min(min(extractdata(dlXB)));
 % xmax = max(real(1./sqrt(ee))) + XM;
 % xmin = -xmax - XM;
-[X1,X2] = meshgrid(linspace(xmin,xmax,30),linspace(xmin,xmax,30));
+[X1,X2] = meshgrid(linspace(xmin,xmax,10),linspace(xmin,xmax,10));
 x1 = reshape(X1,[],1);
 x2 = reshape(X2,[],1);
 
@@ -38,7 +38,7 @@ for i = 1 : numel(t)
     x_ = xx(j,:) - xc(t(i))';
     idx(j) = x_*G(t(i))*x_'<1;
   end
-%   idx = true(size(xx,1),1);
+  idx = true(size(xx,1),1);
   xx = xx(idx,:);
   tt = t(i)*ones(size(xx,1),1);
   dlxx = dlarray(xx','SBCS');
@@ -84,6 +84,7 @@ end
 %% Plot results
 h = figure('Position',[180 250 550 450]);
 for i = 1 : numel(t)
+  
   mesh(X1,X2,reshape(Vplot{i},size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')
   hold on
   mesh(X1,X2,reshape(VdotPlot{i},size(X1,1),size(X1,2)),'FaceColor',[1 0 0],'FaceAlpha','0.5')

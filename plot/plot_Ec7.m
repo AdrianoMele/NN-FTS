@@ -29,7 +29,9 @@ u2 = t*0;
 h = waitbar(0,'progress...');
 for it = 1 : numel(t)
   
-  v(:,it) = controller_DLTB(network,f,g,t(it),x(:,it),Umax);
+  v(:,it) = controller_DLTB(network,f,g,t(it),x(:,it),Umax*Inf);
+
+  fprintf('Time: %.3f | Controller: %.5f %.5f \n', t(it),v(:,it))
   u1(it) = sqrt(v(1,it)^2 + v(2,it)^2);
   u2(it) = atan2(v(2,it),v(1,it));
   
@@ -41,6 +43,7 @@ for it = 1 : numel(t)
 
   waitbar(it/numel(t),h)
 end
+close(h)
 x(:,end) = [];
 
 %% Plot
@@ -63,5 +66,6 @@ title('Trajectory and FTS sets')
 axis equal
 
 subplot(122)
-plot(t,u1,t,u2, 'linewidth', 2)
+% plot(t,u1,t,u2, 'linewidth', 2)
+plot(t,v, 'linewidth', 2)
 title('Control action')

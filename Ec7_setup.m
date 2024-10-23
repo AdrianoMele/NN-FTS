@@ -2,8 +2,8 @@
 % Controlled system
 
 %% MLP parameters
-numLayers  = 5; % hidden layers + 2 (in/out)
-numNeurons = 32;
+numLayers  = 4; % hidden layers + 2 (in/out)
+numNeurons = 16;
 
 %% Training options
 % Epochs and minibatch size
@@ -11,12 +11,12 @@ numEpochs      = 40;
 numMiniBatches = 500;
 
 % Specify ADAM optimization options
-initialLearnRate = 0.01;
+initialLearnRate = 0.005;
 decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 1e0;  % weight on derivative condition
-options.wVbound   = 5e1;  % weight on boundary condition
+options.wVbound   = 5e0;  % weight on boundary condition
 options.tolVdot   = 0;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
 options.tolVbound = 1e-0;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
@@ -40,7 +40,7 @@ g = @gg;
 nx = 2;
 
 % maximum control action
-Umax = [1;1]*10/sqrt(2);
+Umax = [1;1]*50/sqrt(2);
 
 % guiding center
 xc = @(t) [2*t + sin(2*pi*t/5);

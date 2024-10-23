@@ -74,7 +74,7 @@ for epoch = 1:numEpochs
     dlT = dlarray(T','SBCS');
 
     % Evaluate the model gradients and loss using dlfeval
-    [gradients,loss,~] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
+    [gradients,loss,~,stopFlagVB,stopFlagVdot] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
 
     % Update learning rate
     learningRate = initialLearnRate / (1+decayRate*iteration);
@@ -91,14 +91,16 @@ for epoch = 1:numEpochs
     % Diagnostics
     loss = double(gather(extractdata(loss)));
     D = duration(0,0,toc(start),'Format','hh:mm:ss');
+    msg = fprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n VB condition: %d, Vdot condition: %d \n", ...
+        epoch, string(D), learningRate, loss, stopFlagVB, stopFlagVdot);
     if verbose
       % Plot training progress
       addpoints(lineLoss,iteration, loss);
       figure(ht)
-      title(sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f", epoch, string(D), learningRate, loss))
+      title(msg)
       drawnow
     else
-      fprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n", epoch, string(D), learningRate, loss)
+      fprintf(msg)
     end
   end
 

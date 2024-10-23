@@ -1,4 +1,4 @@
-function [gradients,loss,solutionFound] = modelLoss_DLTB(network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
+function [gradients,loss,solutionFound,stopFlagVB,stopFlagVdot] = modelLoss_DLTB(network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
 
 % Extract options
 tolVdot   = options.tolVdot;
@@ -77,7 +77,5 @@ gradients = dlgradient(loss,network.Learnables,'EnableHigherDerivatives',true);
 stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
 stopFlagVdot  = not(any(extractdata(Vdot)>0));
 solutionFound = stopFlagVB & stopFlagVdot;
-
-fprintf('VB condition: %d, Vdot condition: %d \n', stopFlagVB, stopFlagVdot)
 
 end
