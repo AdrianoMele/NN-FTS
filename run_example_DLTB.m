@@ -47,5 +47,3 @@ plot_results_DLTB;
 % rmpath ./functions
 % rmpath ./model
 % rmpath ./plot
-
-

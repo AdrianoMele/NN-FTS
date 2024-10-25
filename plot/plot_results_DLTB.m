@@ -22,7 +22,8 @@ xmax = max(max(extractdata(dlXB)));
 xmin = min(min(extractdata(dlXB)));
 % xmax = max(real(1./sqrt(ee))) + XM;
 % xmin = -xmax - XM;
-[X1,X2] = meshgrid(linspace(xmin,xmax,10),linspace(xmin,xmax,10));
+np = 30;
+[X1,X2] = meshgrid(linspace(xmin,xmax,np),linspace(xmin,xmax,np));
 x1 = reshape(X1,[],1);
 x2 = reshape(X2,[],1);
 
@@ -38,7 +39,7 @@ for i = 1 : numel(t)
     x_ = xx(j,:) - xc(t(i))';
     idx(j) = x_*G(t(i))*x_'<1;
   end
-  idx = true(size(xx,1),1);
+%   idx = true(size(xx,1),1);
   xx = xx(idx,:);
   tt = t(i)*ones(size(xx,1),1);
   dlxx = dlarray(xx','SBCS');
@@ -61,9 +62,11 @@ for i = 1 : numel(t)
   Vx = squeeze(Vx);
   Vt = squeeze(Vt);
   
-  Vdot = V*0;
+  Vdot = V*0;  
+  uu = [];
   for j = 1 : size(xx,1)
-    Vdot(j) = Vt(j) + Vx(:,j)'*f(tt(j),xx(j,:)') + Vx(:,j)' * g(tt(j),xx(j,:)') * controller_DLTB(network,f,g,tt(j),xx(j,:)',Umax);
+    uu(:,j) = controller_DLTB(network,f,g,t(i),xx(j,:)',Umax);
+    Vdot(j) = Vt(j) + Vx(:,j)'*f(t(i),xx(j,:)') + Vx(:,j)' * g(t(i),xx(j,:)') * uu(:,j);
   end
   Vdot = gather(Vdot);
   
@@ -76,6 +79,10 @@ for i = 1 : numel(t)
   
   Vplot{i}(~idx)    = NaN;
   VdotPlot{i}(~idx) = NaN;
+
+  U{i} = zeros(size(uu,1),size(x1,1));
+  U{i}(:,idx)  = gather(uu);
+  U{i}(:,~idx) = NaN;
   
   zmax = max([zmax,max(V),max(Vdot)]);
   zmin = min([zmin,min(V),min(Vdot)]);
@@ -118,6 +125,23 @@ for i = 1 : numel(t)
   
   pause(0.00001)
 end
+
+%% controller
+h = figure('Position',[180 250 550 450]);
+for i = 1 : numel(t)
+  U_ = U{i};
+  for j = 1:size(U_,1)    
+    subplot(1,size(U_,1),j)
+    hold off
+    mesh(X1,X2,reshape(U_(j,:),size(X1,1),size(X1,2)),'FaceColor','flat','FaceAlpha','0.5')    
+    title(sprintf('u %d | t %.2f',j,t(i)))
+    hold on
+    plot_ellipse(R,xc(t(1)),'r','LineWidth',2);
+    plot_ellipse(G(t(i)),xc(t(i)),'b','LineWidth',2);  
+  end
+  pause(1e-3)
+end
+
 
 %% Plot snapshots
 

@@ -91,7 +91,7 @@ for epoch = 1:numEpochs
     % Diagnostics
     loss = double(gather(extractdata(loss)));
     D = duration(0,0,toc(start),'Format','hh:mm:ss');
-    msg = fprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n VB condition: %d, Vdot condition: %d \n", ...
+    msg = sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n VB condition: %d, Vdot condition: %d \n", ...
         epoch, string(D), learningRate, loss, stopFlagVB, stopFlagVdot);
     if verbose
       % Plot training progress

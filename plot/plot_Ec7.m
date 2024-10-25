@@ -17,29 +17,31 @@ assert(max(V0)<min(VB),'boundary condition not satisfied')
 %% Simulation
 
 % refine time vector
-Ts = 1e-3;
+Ts = 1e-2;
 t = t(1):Ts:t(end);
 
 x0 = [.01;.02];
+x = zeros(nx,numel(t));
 x(:,1) = x0;
-Ts = t(2)-t(1);
 
 u1 = t*0;
 u2 = t*0;
 h = waitbar(0,'progress...');
 for it = 1 : numel(t)
   
-  v(:,it) = controller_DLTB(network,f,g,t(it),x(:,it),Umax*Inf);
+  v(:,it) = controller_DLTB(network,f,g,t(it),x(:,it),Umax);
 
-  fprintf('Time: %.3f | Controller: %.5f %.5f \n', t(it),v(:,it))
+  fprintf('Time: %.3f | x(t): %.3f %.3f | Controller: %.5f %.5f \n', t(it),x(:,it),v(:,it))
   u1(it) = sqrt(v(1,it)^2 + v(2,it)^2);
   u2(it) = atan2(v(2,it),v(1,it));
   
   % trajectory
 %   x(1,it+1) = x(1,it)+Ts*u1(it)*cos(u2(it));
 %   x(2,it+1) = x(2,it)+Ts*u1(it)*sin(u2(it));
-  x(1,it+1) = x(1,it)+Ts*v(1,it);
-  x(2,it+1) = x(2,it)+Ts*v(2,it);
+%   x(1,it+1) = x(1,it)+Ts*v(1,it);
+%   x(2,it+1) = x(2,it)+Ts*v(2,it);
+
+  x(:,it+1) = x(:,it) + Ts*(f(t(it),x(it)) + g(t(it),x(it))*v(:,it));
 
   waitbar(it/numel(t),h)
 end
@@ -55,7 +57,7 @@ figure
 subplot(121)
 plot(x(1,:),x(2,:)), grid, hold on
 k = 1;
-for it = [1:1500:length(t) length(t)]
+for it = [1:round(numel(t)/5):length(t) length(t)]
   xp = xc(t(it));
   plot(xp(1)+rho(t(it))*cos(theta), xp(2)+rho(t(it))*sin(theta), 'g', 'linewidth', 2), hold on
   text(x(1,it),x(2,it),num2str(k))

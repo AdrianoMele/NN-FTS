@@ -3,7 +3,7 @@
 
 %% MLP parameters
 numLayers  = 4; % hidden layers + 2 (in/out)
-numNeurons = 16;
+numNeurons = 64;
 
 %% Training options
 % Epochs and minibatch size
@@ -11,21 +11,21 @@ numEpochs      = 40;
 numMiniBatches = 500;
 
 % Specify ADAM optimization options
-initialLearnRate = 0.005;
+initialLearnRate = 0.01;
 decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 1e0;  % weight on derivative condition
-options.wVbound   = 5e0;  % weight on boundary condition
-options.tolVdot   = 0;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
-options.tolVbound = 1e-0;  % tolerance on boundary condition
+options.wVbound   = 1e1;  % weight on boundary condition
+options.tolVdot   = 1e-1;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
+options.tolVbound = 1e-1;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
-options.wV        = 0e-5; % regularization on V
+options.wV        = 0e-0; % regularization on V
 
 % Collocation points
-NPC = 10000;
+NPC = 60000;
 NPB = 100; % for each time sample
-NP0 = 200;
+NP0 = 400;
 
 %% Define FTS problem
 
@@ -40,7 +40,7 @@ g = @gg;
 nx = 2;
 
 % maximum control action
-Umax = [1;1]*50/sqrt(2);
+Umax = [1;1]/sqrt(2)*20;
 
 % guiding center
 xc = @(t) [2*t + sin(2*pi*t/5);
@@ -82,7 +82,6 @@ end
 function g_ = gg(t,x) % with v1 = u1*cos(u2) and v2 = u1*sin(u2)
 g_ = eye(size(x,1));
 g_ = repmat(g_,1,1,numel(t));
-
 if isdlarray(x) 
   g_ = dlarray(g_,'SSB'); 
 end
