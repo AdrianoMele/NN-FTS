@@ -3,7 +3,7 @@
 
 %% MLP parameters
 numLayers  = 4; % hidden layers + 2 (in/out)
-numNeurons = 64;
+numNeurons = 32;
 
 %% Training options
 % Epochs and minibatch size
@@ -11,21 +11,21 @@ numEpochs      = 40;
 numMiniBatches = 500;
 
 % Specify ADAM optimization options
-initialLearnRate = 0.01;
+initialLearnRate = 0.005;
 decayRate        = 0.00001;
 
 % Additional training parameters
 options.wVdot     = 1e0;  % weight on derivative condition
 options.wVbound   = 1e1;  % weight on boundary condition
-options.tolVdot   = 1e-1;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
-options.tolVbound = 1e-1;  % tolerance on boundary condition
+options.tolVdot   = 1e-3;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
+options.tolVbound = 1e-2;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
 options.wV        = 0e-0; % regularization on V
 
 % Collocation points
-NPC = 60000;
-NPB = 100; % for each time sample
-NP0 = 400;
+NPC = 10000;
+NPB = 50; % for each time sample
+NP0 = 200;
 
 %% Define FTS problem
 

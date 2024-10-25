@@ -9,7 +9,7 @@ addpath ./plot
 rng(0) % for repeatability
 
 % Debug options
-verbose = 1;
+verbose = 0;
 
 % To train on a GPU if one is available, specify the execution environment "auto". 
 executionEnvironment = "cpu";
