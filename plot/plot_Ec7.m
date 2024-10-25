@@ -29,7 +29,7 @@ u2 = t*0;
 h = waitbar(0,'progress...');
 for it = 1 : numel(t)
   
-  v(:,it) = controller_DLTB(network,f,g,t(it),x(:,it),Umax);
+  v(:,it) = -controller_DLTB(network,f,g,t(it),x(:,it),Umax);
 
   fprintf('Time: %.3f | x(t): %.3f %.3f | Controller: %.5f %.5f \n', t(it),x(:,it),v(:,it))
   u1(it) = sqrt(v(1,it)^2 + v(2,it)^2);
@@ -41,7 +41,7 @@ for it = 1 : numel(t)
 %   x(1,it+1) = x(1,it)+Ts*v(1,it);
 %   x(2,it+1) = x(2,it)+Ts*v(2,it);
 
-  x(:,it+1) = x(:,it) + Ts*(f(t(it),x(it)) + g(t(it),x(it))*v(:,it));
+  x(:,it+1) = x(:,it) + Ts*(f(t(it),x(:,it)) + g(t(it),x(:,it))*v(:,it));
 
   waitbar(it/numel(t),h)
 end

@@ -39,15 +39,11 @@ LgV = g_x'*Vx;
 % Sontag #1
 alpha = (Vt + LfV);
 beta  = LgV;
-if norm(beta)>0.001*norm(Umax)
-  u = -beta/(sum(beta.^2)*(1+sqrt(1+sum(beta.^2)))) * (alpha + sqrt(alpha.^2 + sum(beta.^4)));
-else
-  u = 0;
-end
-% if size(LgV,1)==1
-%   u = -(Vt + LfV + sqrt(LfV.^2 + LgV.^4)) ./  LgV; 
+% if norm(beta)>0.001*norm(Umax)
+  u = -beta/(sum(beta.^2)) * (alpha + sqrt(alpha.^2 + sum(beta.^4)));
+%   u = -beta/(sum(beta.^2)*(1+sqrt(1+sum(beta.^2)))) * (alpha + sqrt(alpha.^2 + sum(beta.^4)));
 % else
-%   u = -LgV .* (Vt + LfV + sqrt(LfV.^2 + sum(LgV.^4))) ./ (sum(LgV.^2));
+%   u = 0;
 % end
 
 u = max(min(u,Umax),-Umax);
