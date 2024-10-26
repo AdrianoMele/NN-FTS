@@ -1,4 +1,5 @@
-function [gradients,loss,solutionFound,stopFlagVB,stopFlagVdot] = modelLoss_DLTB(network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
+function [gradients,loss,solutionFound,stopFlagVB,stopFlagVdot] = ...
+  modelLoss_DLTB(network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
 
 % Extract options
 tolVdot   = options.tolVdot;
@@ -27,11 +28,11 @@ LfV = sum(Vx.*f_x);
 
 % all the gymnastics below should fix dimension labels and make the
 % operations afterwards more robust
-Vx_ = extractdata(Vx);
-Vx_ = reshape(squeeze(Vx_),size(Vx_,1),1,size(Vx_,4));
-g_  = extractdata(g_x);
-LgV = pagemtimes(Vx_,'transpose',g_,'none');
-UU = repmat(Umax,1,1,numel(dlT));
+Vx_  = extractdata(Vx);
+Vx_  = reshape(squeeze(Vx_),size(Vx_,1),1,size(Vx_,4));
+g_   = extractdata(g_x);
+LgV  = pagemtimes(Vx_,'transpose',g_,'none');
+UU   = repmat(Umax,1,1,numel(dlT));
 LgVU = pagemtimes(abs(LgV),UU); 
 LgVU = dlarray(LgVU,'SCBS');
 
@@ -53,7 +54,6 @@ V0 = model_DLTB(network,dlX0,dlT0);
 VB = model_DLTB(network,dlXB,dlTB);
 V0max = max(V0);
 VBerr = max(V0max-VB + tolVbound, 0);
-
 zeroTarget = zeros(size(VBerr), 'like', VBerr);
 lossVB = mse(VBerr,zeroTarget);
 
@@ -77,5 +77,18 @@ gradients = dlgradient(loss,network.Learnables,'EnableHigherDerivatives',true);
 stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
 stopFlagVdot  = not(any(extractdata(Vdot)>0));
 solutionFound = stopFlagVB & stopFlagVdot;
+
+% debug plot
+figure(5)
+subplot(211)
+plot(squeeze(Vt+LfV-LgVU),'-*')
+title('$\dot{V}$','Interpreter','latex')
+subplot(212)
+dV_ = V0max-VB;
+plot(dV_,'-o')
+hold on
+plot(dV_(dV_>0),'-or')
+hold off
+title('$\max(V_0) - V_b$','Interpreter','latex')
 
 end
