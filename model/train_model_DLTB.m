@@ -43,7 +43,8 @@ accfun_loss = @modelLoss_DLTB; % no acceleration :(
 
 % Initialize the training progress plot.
 if verbose
-  ht = figure('Position',[250 300 850 470]);
+  ht = figure('Position',[250 300 850*2 600]);
+  subplot(121)
   C = colororder;
   lineLoss = animatedline('Color',C(2,:),'LineWidth',2);
   ylim([0 inf])
@@ -74,7 +75,7 @@ for epoch = 1:numEpochs
     dlT = dlarray(T','SBCS');
 
     % Evaluate the model gradients and loss using dlfeval
-    [gradients,loss,~,stopFlagVB,stopFlagVdot] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
+    [gradients,loss,~,stopFlagVB,stopFlagVdot,ifail_VB,ifail_Vdot] = dlfeval(accfun_loss,network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options);
 
     % Update learning rate
     learningRate = initialLearnRate / (1+decayRate*iteration);
@@ -91,16 +92,30 @@ for epoch = 1:numEpochs
     % Diagnostics
     loss = double(gather(extractdata(loss)));
     D = duration(0,0,toc(start),'Format','hh:mm:ss');
-    msg = sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n VB condition: %d, Vdot condition: %d \n", ...
-        epoch, string(D), learningRate, loss, stopFlagVB, stopFlagVdot);
+    msg1 = sprintf("Epoch: %d | Elapsed: %s | Learning rate: %.6f | Loss: %.5f \n",epoch, string(D), learningRate, loss);
+    msg2 = sprintf("VB condition: %d, Vdot condition: %d \n", stopFlagVB, stopFlagVdot);
     if verbose
       % Plot training progress
       addpoints(lineLoss,iteration, loss);
       figure(ht)
-      title(msg)
+      title(msg1)
+
+      % Vdot failing points
+      subplot(122)
+      cla   
+      % VB failing points
+      plot(squeeze(dlX0(1,:,:,:)),squeeze(dlX0(2,:,:,:)),'.g','markersize',12)
+      hold on
+      plot(squeeze(dlXB(1,:,:,:)),squeeze(dlXB(2,:,:,:)),'.b','markersize',12)
+      plot(squeeze(dlXB(1,:,:,ifail_VB)),squeeze(dlXB(2,:,:,ifail_VB)),'.r','markersize',12)
+      plot(squeeze(dlX(1,:,:,ifail_Vdot)),squeeze(dlX(2,:,:,ifail_Vdot)),'*r','markersize',6)
+      xlabel('$x_1$','Interpreter','latex'); ylabel('$x_2$','Interpreter','latex');
+      title(msg2);
+
       drawnow
     else
-      fprintf(msg)
+      fprintf(msg1)
+      fprintf(msg2)
     end
   end
 

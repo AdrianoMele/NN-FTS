@@ -1,4 +1,4 @@
-function [gradients,loss,solutionFound,stopFlagVB,stopFlagVdot] = ...
+function [gradients,loss,solutionFound,stopFlagVB,stopFlagVdot,ifail_VB,ifail_Vdot] = ...
   modelLoss_DLTB(network,dlX,dlT,dlX0,dlT0,dlXB,dlTB,f,g,Umax,options)
 
 % Extract options
@@ -13,13 +13,6 @@ wV        = options.wV;
 [V, gradients_V] = modelGradients_DLTB(network,dlX,dlT);
 Vx = gradients_V{1};
 Vt = gradients_V{2};
-
-% remove unnecessary dimensions
-% Vx = squeeze(Vx);
-% Vt = squeeze(Vt);
-
-% dlX = squeeze(dlX);
-% dlT = squeeze(dlT);
 
 % Lie derivatives
 f_x = f(dlT,dlX);
@@ -36,8 +29,7 @@ UU   = repmat(Umax,1,1,numel(dlT));
 LgVU = pagemtimes(abs(LgV),UU); 
 LgVU = dlarray(LgVU,'SCBS');
 
-% Calculate lossVdot: Vdot = Vt + Vx*f(dlT,dlX)
-% Vdot = Vt + sum(Vx.*f(dlT,dlX));
+% Calculate lossVdot: Vdot = Vt + Vx'*f(dlT,dlX) - abs(Vx'*g(dlT,dlX))*Umax
 Vdot = Vt + LfV - LgVU;
 Vdoterr = max(Vdot + tolVdot,0);
 % Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0); % ~ Zubov PDE
@@ -57,7 +49,7 @@ VBerr = max(V0max-VB + tolVbound, 0);
 zeroTarget = zeros(size(VBerr), 'like', VBerr);
 lossVB = mse(VBerr,zeroTarget);
 
-% Regularize by slightly penalizing Vt (Currently not used)
+% Regularize by slightly penalizing Vt
 zeroTarget = zeros(size(Vt), 'like', Vt);
 Vterr = Vt;
 lossVt = mse(Vterr,zeroTarget);
@@ -78,17 +70,23 @@ stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
 stopFlagVdot  = not(any(extractdata(Vdot)>0));
 solutionFound = stopFlagVB & stopFlagVdot;
 
-% debug plot
-figure(5)
-subplot(211)
-plot(squeeze(Vt+LfV-LgVU),'-*')
-title('$\dot{V}$','Interpreter','latex')
-subplot(212)
-dV_ = V0max-VB;
-plot(dV_,'-o')
-hold on
-plot(dV_(dV_>0),'-or')
-hold off
-title('$\max(V_0) - V_b$','Interpreter','latex')
+% for debugging
+ifail_Vdot = squeeze(Vt+LfV-LgVU)>0;
+ifail_VB   = V0max-VB>0;
+
+% % debug plot
+% figure(5)
+% subplot(211)
+% plot(squeeze(Vt+LfV-LgVU),'-*')
+% title('$\dot{V}$','Interpreter','latex')
+% subplot(212)
+% dV_ = V0max-VB;
+% plot(dV_,'-o')
+% hold on
+% dV2 = dV_;
+% dV2(dV2<=0) = NaN;
+% plot(dV2,'-or')
+% hold off
+% title('$\max(V_0) - V_b$','Interpreter','latex')
 
 end
