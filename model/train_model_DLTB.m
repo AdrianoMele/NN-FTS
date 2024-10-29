@@ -99,16 +99,17 @@ for epoch = 1:numEpochs
       addpoints(lineLoss,iteration, loss);
       figure(ht)
       title(msg1)
-
-      % Vdot failing points
+      
       subplot(122)
-      cla   
-      % VB failing points
+      cla         
+      plot(squeeze(dlX(1,:,:,:)), squeeze(dlX(2,:,:,:)), '*b','markersize',5)
       plot(squeeze(dlX0(1,:,:,:)),squeeze(dlX0(2,:,:,:)),'.g','markersize',12)
       hold on
       plot(squeeze(dlXB(1,:,:,:)),squeeze(dlXB(2,:,:,:)),'.b','markersize',12)
+      % VB failing points
       plot(squeeze(dlXB(1,:,:,ifail_VB)),squeeze(dlXB(2,:,:,ifail_VB)),'.r','markersize',12)
-      plot(squeeze(dlX(1,:,:,ifail_Vdot)),squeeze(dlX(2,:,:,ifail_Vdot)),'*r','markersize',6)
+      % Vdot failing points
+      plot(squeeze(dlX(1,:,:,ifail_Vdot)),squeeze(dlX(2,:,:,ifail_Vdot)),'*r','markersize',10)
       xlabel('$x_1$','Interpreter','latex'); ylabel('$x_2$','Interpreter','latex');
       title(msg2);
 
