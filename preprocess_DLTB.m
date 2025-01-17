@@ -24,8 +24,8 @@ dlT0 = dlarray(T0','SBCS');
 dlX0 = dlarray(X0','SBCS');
 
 %% Initialize deep learning model
-numIn   = nx + 1; % state and time
+numIn   = nx + 1; % state  time
 numOut  = 1;      % always one - we are getting V directly from the MLP
 network = initNetwork_DLTB(numIn,numOut,numNeurons,numLayers);
-% parameters = initNetwork(numIn,numOut,numNeurons,numLayers);
+% parameters = initNetwork(numIn,numOut,numNeurons,numLayers); % legacy
 

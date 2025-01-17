@@ -8,6 +8,7 @@ function network = initNetwork_DLTB(numIn,numOut,numNeurons,numLayers)
 % Generate network
 layers = [ ...
             imageInputLayer([numIn 1],'Normalization','none')
+            ... batchNormalizationLayer()
             fullyConnectedLayer(numNeurons) ];
 for i = 2 : numLayers-1
   layers = [layers 

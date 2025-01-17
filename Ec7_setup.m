@@ -2,35 +2,37 @@
 % Controlled system
 
 %% MLP parameters
-numLayers  = 5; % hidden layers + 2 (in/out)
-numNeurons = 128;
+numLayers  = 3; % hidden layers + 2 (in/out)
+numNeurons = 64;
 
 %% Training options
 % Epochs and minibatch size
 numEpochs      = 100;
-numMiniBatches = 1000;
+numMiniBatches = 100;
 
 % Specify ADAM optimization options
-initialLearnRate = 0.05;
+initialLearnRate = 0.01;
 decayRate        = 0.00001;
 
 % Additional training parameters
-options.wVdot     = 1e-1;  % weight on derivative condition
-options.wVbound   = 1e1;  % weight on boundary condition
-options.tolVdot   = 0e-1;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
-options.tolVbound = 1e-5;  % tolerance on boundary condition
+options.wVdot     = 1e0;  % weight on derivative condition
+options.wVbound   = 1e0;  % weight on boundary condition
+options.tolVdot   = 1e-2;    % tolerance on derivative condition (can be 0 for FTS and should if domains are not centered in the origin)
+options.tolVbound = 1e-2;  % tolerance on boundary condition
 options.wVt       = 0;    % regularization on dV/dt
-options.wV        = 0e-6; % regularization on V
+options.wV        = 1e-6; % regularization on V
 
 % Collocation points
-NPC = 50000;
+NPC = 10000;
 NPB = 50; % for each time sample
-NP0 = 100;
+NP0 = 400;
+nt  = 50;
 
 %% Define FTS problem
+T = 3;
 
 % Time vector
-t = (0:5e-2:3)';
+t = linspace(0,T,nt)';
 
 % System
 f = @ff; 
@@ -44,7 +46,7 @@ Umax = [1;1]/sqrt(2)*20;
 
 % guiding center
 xc = @(t) [2*t + sin(2*pi*t/5);
-           2*t + cos(2*pi*t/5) - 1]; 
+           2*t + cos(2*pi*t/5) - 1]*0; % switched off for now
 
 % ellipses
 gamma0 = 0.1;
@@ -70,8 +72,6 @@ R = 1/gamma0^2     * eye(nx);
 % end
 % grid, axis equal, hold on
 % legend('initial condition set', 'FTS sets')
-
-
 
 %% Plant
 

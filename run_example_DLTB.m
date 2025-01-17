@@ -15,14 +15,14 @@ verbose = 1;
 executionEnvironment = "cpu";
 
 % dummy input term for stability analysis
-g    = @(x)0;
-Umax = 0;
+% g    = @(x)0;
+% Umax = 0;
 
 % for ellipses moving in time; might be overwritten in the setup
 xc = [];
 
 %% Choose example
-example = "Ec7"; 
+example = "Ec8"; 
 
 setupscript = example + "_setup.m";
 filename    = example + "_res.gif"; % used to save plot

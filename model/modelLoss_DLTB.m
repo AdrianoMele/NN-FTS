@@ -31,7 +31,7 @@ LgVU = dlarray(LgVU,'SCBS');
 
 % Calculate lossVdot: Vdot = Vt + Vx'*f(dlT,dlX) - abs(Vx'*g(dlT,dlX))*Umax
 Vdot = Vt + LfV - LgVU;
-Vdoterr = max(Vdot + tolVdot,0);
+Vdoterr = max(Vdot + tolVdot,0); % for FTS we can also consider a derivative that is negative everywhere (thanks to the Vt term)
 % Vdoterr = max(Vdot + tolVdot.*sum(dlX.^2),0); % ~ Zubov PDE
 zeroTarget = zeros(size(Vdoterr), 'like', Vdoterr);
 lossVdot = mse(Vdoterr,zeroTarget);
@@ -64,15 +64,19 @@ loss = wVdot*lossVdot + wVbound*lossVB + wVt*lossVt + wV*lossV;
 % Calculate gradients with respect to the learnable parameters.
 gradients = dlgradient(loss,network.Learnables,'EnableHigherDerivatives',true);
 
-% Check termination condition: derivative must be nonpositive everywhere,
-% distance between inf and sup must be positive
-stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
-stopFlagVdot  = not(any(extractdata(Vdot)>0));
-solutionFound = stopFlagVB & stopFlagVdot;
+% % Check termination condition: derivative must be nonpositive everywhere,
+% % distance between inf and sup must be positive
+% stopFlagVB    = not(any(extractdata(V0max-VB)>=0));
+% stopFlagVdot  = not(any(extractdata(Vdot)>0));
+% solutionFound = stopFlagVB & stopFlagVdot;
 
 % for debugging
 ifail_Vdot = squeeze(Vt+LfV-LgVU)>0;
 ifail_VB   = V0max-VB>0;
+
+stopFlagVdot = ~any(ifail_Vdot);
+stopFlagVB   = ~any(ifail_VB);
+solutionFound = stopFlagVB & stopFlagVdot;
 
 % % debug plot
 % figure(5)

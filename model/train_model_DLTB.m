@@ -11,8 +11,8 @@ if (executionEnvironment == "auto" && canUseGPU) || (executionEnvironment == "gp
   dlXB = gpuArray(dlXB);
 end
 
-% % Shuffle dataset
-% ds = shuffle(ds);
+% Shuffle dataset
+ds = shuffle(ds);
 
 % Used to verify termination condition
 TXC  = cell2mat(ds.readall);
@@ -43,7 +43,7 @@ accfun_loss = @modelLoss_DLTB; % no acceleration :(
 
 % Initialize the training progress plot.
 if verbose
-  ht = figure('Position',[250 300 850*2 600]);
+  ht = figure('Position',[20 20 850*2 600]);
   subplot(121)
   C = colororder;
   lineLoss = animatedline('Color',C(2,:),'LineWidth',2);
@@ -70,7 +70,7 @@ for epoch = 1:numEpochs
     T = next_sample(:,1);
     X = next_sample(:,2:end);
 
-    % To be checked
+    % Convert to dlarray
     dlX = dlarray(X','SBCS');
     dlT = dlarray(T','SBCS');
 
@@ -96,10 +96,12 @@ for epoch = 1:numEpochs
     msg2 = sprintf("VB condition: %d, Vdot condition: %d \n", stopFlagVB, stopFlagVdot);
     if verbose
       % Plot training progress
+      
       addpoints(lineLoss,iteration, loss);
       figure(ht)
+      subplot(121)
       title(msg1)
-      
+
       subplot(122)
       cla         
       plot(squeeze(dlX(1,:,:,:)), squeeze(dlX(2,:,:,:)), '*b','markersize',5)

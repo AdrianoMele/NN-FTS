@@ -16,20 +16,23 @@ else
   dlT = dlarray(t,'SBCS');
 end
 
-[~, gradients_V] = dlfeval(@modelGradients_DLTB,network,dlX,dlT);
+[V, gradients_V] = dlfeval(@modelGradients_DLTB,network,dlX,dlT);
 Vx = gradients_V{1};
 Vt = gradients_V{2};
 
 % remove unnecessary dimensions
 Vx = extractdata(squeeze(Vx));
 Vt = extractdata(squeeze(Vt));
-dlX = squeeze(dlX);
-dlT = squeeze(dlT);
 
 % Lie derivatives
-f_x = f(dlT,dlX);
-g_x = g(dlT,dlX);
-
+% dlX = squeeze(dlX);
+% dlT = squeeze(dlT);
+% 
+% f_x = f(dlT,dlX);
+% g_x = g(dlT,dlX);
+% 
+f_x = f(t,x);
+g_x = g(t,x);
 if isdlarray(f_x), f_x = extractdata(f_x); end
 if isdlarray(g_x), g_x = extractdata(g_x); end
 
@@ -39,13 +42,9 @@ LgV = g_x'*Vx;
 % Sontag #1
 alpha = (Vt + LfV);
 beta  = LgV;
-% if norm(beta)>0.001*norm(Umax)
-  u = -beta/(sum(beta.^2)) * (alpha + sqrt(alpha.^2 + sum(beta.^4)));
-%   u = -beta/(sum(beta.^2)*(1+sqrt(1+sum(beta.^2)))) * (alpha + sqrt(alpha.^2 + sum(beta.^4)));
-% else
-%   u = 0;
-% end
+u = - (beta * (alpha + sqrt(alpha.^2 + sum(beta.^2)^2))) / (sum(beta.^2));
 
+% saturation
 u = max(min(u,Umax),-Umax);
 
 end
